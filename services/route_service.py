@@ -2,6 +2,11 @@ import httpx
 
 
 class RouteService:
+    config=None
+
+    @classmethod
+    def set_config(cls, config):
+        cls.config = config
     @staticmethod
     async def get_transfers_in_city(s1, s2):
         url="https://routing.api.2gis.com/public_transport/2.0"

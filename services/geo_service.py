@@ -5,7 +5,6 @@ class GeoService:
 
     @classmethod
     def set_config(cls, config):
-        """Метод для установки данных из JSON."""
         cls.config = config
 
     @staticmethod

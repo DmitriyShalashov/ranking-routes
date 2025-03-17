@@ -6,19 +6,27 @@ import json
 router = APIRouter()
 
 @router.get("/geo_point")
-async def get_external_data():
+async def get_external_data(name):
+    if not name:
+        return json.dumps({"data":[]})
     try:
-        data = await GeoService.get_point_by_name()
+        result=[]
+        data = await GeoService.get_point_by_name(name)
         for geo_obj in data["response"]["GeoObjectCollection"]["featureMember"]:
             type=geo_obj["GeoObject"]["metaDataProperty"]["GeocoderMetaData"]["kind"]
             if type=="locality" or type=="province":
                 print("Пункт: ",geo_obj["GeoObject"]["name"],geo_obj["GeoObject"]["description"])
                 cords=list(map(float,geo_obj["GeoObject"]["Point"]["pos"].split(" ")))
                 print("Координаты: ","lat: ",cords[1]," lng: ",cords[0])
-
+                result.append({
+                    "lat": cords[1],
+                    "lng": cords[0],
+                    "name":geo_obj["GeoObject"]["name"],
+                    "description": geo_obj["GeoObject"]["description"],
+                })
         # 0 - lng 1 - lat
-
-        return data["response"]["GeoObjectCollection"]["featureMember"][0]
+        print(result)
+        return json.dumps({"data":result})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
